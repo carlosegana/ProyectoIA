@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">Proyecto IA</h1>
-<h1 align="center">Carlos Egaña</h1>
+<h2 align="center">Carlos Egaña</h2>
 
 ---
 
