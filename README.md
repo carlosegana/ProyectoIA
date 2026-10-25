@@ -42,6 +42,12 @@ ProyectoIA/
 └── README.md            # Documentación del proyecto
 ```
 
+## Arquitectura
+
+![Arquitectura de la miniaplicación](docs/arquitectura.png)
+
+---
+
 ## Componentes
 
 | Archivo o carpeta | Descripción |
