@@ -4,7 +4,11 @@
     "intentos": 3
   },
   "extraer_entidades": {
-    "exitos": 2,
+    "exitos": 3,
+    "intentos": 3
+  },
+  "resumir_reporte_falla": {
+    "exitos": 3,
     "intentos": 3
   }
 }

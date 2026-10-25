@@ -52,4 +52,29 @@ BANCO_DE_PROMPT = [
             "required": ["personas", "lugares", "organizaciones"],
         },
     },
+    {
+        "nombre": "resumir_reporte_falla",
+        "system_instruction": (
+            "Eres asesor de un taller mecánico. Resume el reporte del cliente. "
+            "Responde únicamente con un JSON con las claves 'resumen' (máximo 20 palabras), "
+            "'sistema_afectado' (ej. 'frenos', 'motor', 'suspensión') y "
+            "'urgencia' (número de 1 a 5, donde 5 es no manejar el auto)."
+        ),
+        "ejemplo_usuario": (
+            "Hola, el lunes mi Mazda 3 empezó a vibrar en el volante al frenar. "
+            "Ayer se prendió la luz del ABS y hoy escuché un chirrido en la rueda "
+            "delantera derecha. Lo uso todos los días para ir al trabajo y no sé "
+            "si es seguro seguir manejándolo."
+        ),
+        "claves_esperadas": ["resumen", "sistema_afectado", "urgencia"],
+        "response_schema": {
+            "type": "OBJECT",
+            "properties": {
+                "resumen": {"type": "STRING"},
+                "sistema_afectado": {"type": "STRING"},
+                "urgencia": {"type": "NUMBER"},
+            },
+            "required": ["resumen", "sistema_afectado", "urgencia"],
+        },
+    },
 ]

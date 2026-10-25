@@ -1,4 +1,4 @@
- <p align="center">
+<p align="center">
   <img src="https://www.skillnest.com/wp-content/uploads/2025/01/Skillnest_blanca-1.png" alt="Skillnest" width="200"/>
 </p>
 
@@ -7,64 +7,72 @@
 
 ---
 
-## Cómo empezar
+## Qué es
 
-Completa estos pasos progresivamente durante la Unidad U1.2.
+Una miniaplicación en Python que consume la API de Gemini para un asistente de taller mecánico. Arma la petición, la envía, extrae el texto de la respuesta y valida que el JSON venga con la estructura esperada. Incluye un banco de prompts con su prueba de consistencia y una comparación de modelos que justifica cuál usar.
 
-### 01. Inicializar el repositorio
+## Requisitos
 
-Descarga y descomprime el archivo comprimido proporcionado en la plataforma. Inicializa Git en la carpeta y registra un primer commit con la estructura original, antes de realizar modificaciones.
+- Python 3 (probado con 3.11)
+- Una API key de Gemini (se saca en Google AI Studio)
 
-### 02. Crear el entorno virtual
+## Instalación
 
-Crea y activa un entorno virtual de Python, por ejemplo, utilizando `venv`.
+```bash
+git clone https://github.com/carlosegana/ProyectoIA.git
+cd ProyectoIA
+python3 -m venv venv
+source venv/bin/activate        # en Windows: venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env
+```
 
-### 03. Registrar las dependencias
+Después abre `.env` y reemplaza `tu_api_key_aqui` por tu key. La key va solo en `.env`, nunca en `.env.example`.
 
-Instala las librerías necesarias y actualiza `requirements.txt` para reflejar las dependencias del proyecto.
+## Cómo ejecutarlo
 
-### 04. Configurar las credenciales
+Siempre desde la raíz del proyecto y con el entorno virtual activado:
 
-Copia `.env.example` a un archivo llamado `.env` y añade las credenciales necesarias. El archivo `.env` debe permanecer excluido del control de versiones mediante `.gitignore`.
-
----
+| Comando | Qué hace |
+|---|---|
+| `python cliente.py` | Hace una pregunta de ejemplo y muestra la respuesta del modelo |
+| `python -m src.consumir_gemini` | Prueba con salida JSON y muestra latencia, costo y el dato parseado |
+| `python -m src.consistencia` | Corre cada prompt del banco 3 veces y guarda `src/prompts/registro_resultados.json` |
+| `python -m src.evaluacion_modelos` | Compara los modelos candidatos (12 llamadas reales) y guarda `docs/comparacion_modelos.md` |
+| `python -m unittest discover -s tests` | Corre los tests, no llaman a la API |
 
 ## Estructura del proyecto
 
 ```text
 ProyectoIA/
-├── src/                 # Código fuente
-├── docs/                # Documentación técnica
-├── tests/               # Pruebas del código
-├── requirements.txt     # Dependencias de Python
-├── .env.example         # Plantilla de variables de entorno
-├── .gitignore           # Archivos excluidos de Git
-└── README.md            # Documentación del proyecto
+├── cliente.py                       # Punto de entrada: una consulta de ejemplo
+├── src/
+│   ├── consumir_gemini.py           # armar_peticion, enviar_peticion, extraer_texto, costo, reintentos
+│   ├── consistencia.py              # Prueba de consistencia del banco de prompts
+│   ├── evaluacion_modelos.py        # Comparación de modelos (latencia y costo)
+│   └── prompts/
+│       ├── banco.py                 # Banco de prompts
+│       └── registro_resultados.json # Resultado de la prueba de consistencia
+├── docs/
+│   ├── arquitectura.png / .svg      # Diagrama de arquitectura
+│   ├── decision-arquitectura.md     # Decisión de modelo
+│   └── comparacion_modelos.md       # Datos crudos de la comparación
+├── tests/                           # Tests unitarios
+├── requirements.txt                 # Dependencias
+├── .env.example                     # Plantilla de variables de entorno, sin valores reales
+└── .gitignore
 ```
 
 ## Arquitectura
 
 ![Arquitectura de la miniaplicación](docs/arquitectura.png)
 
----
+## Decisión de modelo
 
-## Componentes
+El modelo elegido es `gemini-3.5-flash-lite`. La comparación y las razones están en [docs/decision-arquitectura.md](docs/decision-arquitectura.md).
 
-| Archivo o carpeta | Descripción |
-|---|---|
-| `src/` | Código fuente del proyecto. |
-| `docs/` | Diagramas, decisiones de arquitectura y notas técnicas. |
-| `tests/` | Pruebas del código. |
-| `requirements.txt` | Dependencias necesarias para reconstruir el entorno. |
-| `.env.example` | Plantilla de variables de entorno sin credenciales reales. |
-| `.gitignore` | Configuración de archivos y carpetas excluidos de Git. |
+## Seguridad
 
----
-
-## Reglas del proyecto
-
-- **Protección de credenciales:** no incluir contraseñas, API keys ni tokens directamente en el código o en archivos subidos al repositorio.
-- **Aislamiento de dependencias:** utilizar un entorno virtual independiente para cada proyecto.
-- **Control de versiones:** mantener el trabajo del programa en un repositorio de GitHub.
-
----
+- `.env` está en `.gitignore` y `.env.example` solo trae un valor de ejemplo.
+- La key se manda en el header `x-goog-api-key`, no en la url.
+- Si corres `git log --all --oneline -- .env` aparecen 2 commits: `b6bc47b` agregó un `.env` vacío y `e4d62a8` lo eliminó. Nunca tuvo credenciales: `git show b6bc47b:.env | wc -c` devuelve 0.

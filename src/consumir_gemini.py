@@ -9,7 +9,13 @@ from dotenv import load_dotenv
 
 #carga el .env de la raíz del proyecto
 _RAIZ_PROYECTO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-load_dotenv(os.path.join(_RAIZ_PROYECTO, ".env"))
+#override=True para que el .env del proyecto gane sobre una key vieja exportada en la terminal
+load_dotenv(os.path.join(_RAIZ_PROYECTO, ".env"), override=True)
+
+#error de credencial: es un ValueError, pero aparte para poder cortar la ejecución en vez de reintentar
+class ErrorCredencial(ValueError):
+    pass
+
 
 #Constantes
 MODELO = "gemini-3.5-flash-lite"
@@ -52,7 +58,7 @@ def armar_peticion(modelo, pregunta, system_instruction, response_schema=None):
 #función envía la petición
 def enviar_peticion(url, body):
     if not API_KEY:
-        raise ValueError("No hay GEMINI_API_KEY. Revisa tu archivo .env")
+        raise ErrorCredencial("No hay GEMINI_API_KEY. Revisa tu archivo .env")
 
     headers = {"x-goog-api-key": API_KEY}
     try:
@@ -66,10 +72,10 @@ def enviar_peticion(url, body):
     detalle = respuesta.text[:300]
 
     if respuesta.status_code in (401, 403):
-        raise ValueError(f"Credencial inválida o sin permiso. Revisa tu GEMINI_API_KEY. Detalle: {detalle}")
+        raise ErrorCredencial(f"Credencial inválida o sin permiso. Revisa tu GEMINI_API_KEY. Detalle: {detalle}")
     #Gemini devuelve 400 (no 401) cuando la key es inválida
     if respuesta.status_code == 400 and "API key" in respuesta.text:
-        raise ValueError(f"Credencial inválida o sin permiso. Revisa tu GEMINI_API_KEY. Detalle: {detalle}")
+        raise ErrorCredencial(f"Credencial inválida o sin permiso. Revisa tu GEMINI_API_KEY. Detalle: {detalle}")
     if respuesta.status_code == 429:
         segundos = respuesta.headers.get("Retry-After")
         mensaje = f"Límite excedido. Reintentar en {segundos}s." if segundos else "Límite excedido."
