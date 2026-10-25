@@ -2,11 +2,15 @@ BANCO_DE_PROMPT = [
     {
         "nombre": "estimar_respuesta_y_tiempo",
         "system_instruction": (
-            "Responde únicamente con un JSON con las claves 'respuesta' (texto directo), "
-            "'tiempo_estimado' (ej. 'Inmediato', '5-10 minutos'), 'nivel_complejidad' "
-            "('Bajo', 'Medio' o 'Alto') y 'requiere_soporte_humano' (boolean)."
+            "Eres asesor de un taller mecánico. Responde únicamente con un JSON con las claves "
+            "'respuesta' (texto directo), 'tiempo_estimado' (ej. 'Inmediato', '2-3 horas', "
+            "'1-2 días'), 'nivel_complejidad' ('Bajo', 'Medio' o 'Alto') y "
+            "'requiere_soporte_humano' (boolean, true si el auto necesita que lo vea un mecánico)."
         ),
-        "ejemplo_usuario": "¿Cómo solicito el reembolso de un pedido cancelado?",
+        "ejemplo_usuario": (
+            "Se me encendió la luz de check engine y el auto vibra al acelerar. "
+            "¿Qué debo hacer y cuánto tardaría la revisión?"
+        ),
         "claves_esperadas": [
             "respuesta",
             "tiempo_estimado",
@@ -28,13 +32,14 @@ BANCO_DE_PROMPT = [
         "nombre": "extraer_entidades",
         "system_instruction": (
             "Extrae del texto las personas, los lugares y las organizaciones "
-            "que se mencionen. Responde únicamente con un JSON con las claves "
+            "(marcas, concesionarios, talleres) que se mencionen. "
+            "Responde únicamente con un JSON con las claves "
             "'personas', 'lugares' y 'organizaciones', cada una con una lista "
             "de textos (vacía si no hay ninguno)."
         ),
         "ejemplo_usuario": (
-            "Elena de Troya y Juana de Arco viajaron de Roma a Grecia para reunirse "
-            "con la guerrilla."
+            "Mariana Soto compró un Toyota Corolla en el concesionario AutoNorte de Santiago "
+            "y lo llevó a revisión a Mecánica Rivas, en Valparaíso."
         ),
         "claves_esperadas": ["personas", "lugares", "organizaciones"],
         "response_schema": {
